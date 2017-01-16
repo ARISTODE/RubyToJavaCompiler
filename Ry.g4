@@ -12,6 +12,9 @@ expression : function_definition
            | for_statement
            | while_statement
            | if_statement
+           | expression cond_modifier=IF expression
+           | unless_statement
+           | expression cond_modifier=UNLESS expression
            | comparison_list
            | rvalue
            | return_statement
@@ -78,6 +81,11 @@ if_statement : IF cond_expression crlf statement_body END
              | IF cond_expression crlf statement_body else_token crlf statement_body END
              | IF cond_expression crlf statement_body elsif_statement END
              ;
+
+unless_statement: UNLESS cond_expression crlf statement_body END
+                | UNLESS cond_expression crlf statement_body else_token crlf statement_body END
+                | UNLESS cond_expression crlf statement_body elsif_statement END
+                ;
 
 all_assignment : ( int_assignment | float_assignment | string_assignment | dynamic_assignment );
 cond_expression : comparison_list;
@@ -169,17 +177,14 @@ lvalue : id
        ;
 
 rvalue : lvalue
-
        | int_result
        | float_result
        | string_result
-
        | dynamic_assignment
        | string_assignment
        | float_assignment
        | int_assignment
        | assignment
-
        | literal_t
        | bool_t
        | float_t

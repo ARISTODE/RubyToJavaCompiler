@@ -304,6 +304,18 @@ public class RyBaseListener implements RyListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUnless_statement(RyParser.Unless_statementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnless_statement(RyParser.Unless_statementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAll_assignment(RyParser.All_assignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -272,7 +272,7 @@ public class Compiler {
             // judge if the last expression is return statement
             int child_count = ctx.getChildCount();
             if (!ctx.getChild(child_count - 1).getText().contains("return")) {
-                expression_list_expression += "\n\treturn new Value(45)";
+                expression_list_expression += String.format("return (%s)", node_expression.get(ctx.getChild(child_count-2)));
             }
             node_expression.put(ctx, "{ \t" + expression_list_expression + "\n}");
         }
@@ -475,8 +475,8 @@ public class Compiler {
                 }
             }
             else if (ctx.getChildCount() == 1) {
-                String valToStore = node_expression.get(ctx.getChild(0));
-                String string_expression = "new RyString(\"" + valToStore + "\"," + RyParser.LITERAL + ")";
+                String literal_t_expr = node_expression.get(ctx.getChild(0));
+                String string_expression = String.format("new RyString( %s, %d)", literal_t_expr, RyParser.LITERAL);
                 node_expression.put(ctx, string_expression);
             }
         }
@@ -701,8 +701,17 @@ public class Compiler {
         }
 
         public void exitExpression(RyParser.ExpressionContext ctx) {
-            String child_expression = node_expression.get(ctx.getChild(0));
-            node_expression.put(ctx, child_expression);
+            // if the subexpression is a modifier
+            if (ctx.cond_modifier != null) {
+                String modifier = ctx.cond_modifier.getText();
+                String expression_to_eval = node_expression.get(ctx.getChild(0));
+                String cond_expression = node_expression.get(ctx.getChild(2));
+                String modifierExpr = String.format("%s (%s) {\n %s \n}", modifier, cond_expression, expression_to_eval);
+                node_expression.put(ctx, modifierExpr);
+            }else {
+                String child_expression = node_expression.get(ctx.getChild(0));
+                node_expression.put(ctx, child_expression);
+            }
         }
 
         // ================================ Values =====================================
@@ -719,7 +728,7 @@ public class Compiler {
         //  ================================ Puts call =====================================
         public void exitPuts_call(RyParser.Puts_callContext ctx) {
             String expression_to_print = node_expression.get(ctx.getChild(1));
-            node_expression.put(ctx, "Formatter.classCastHelper(" + expression_to_print.substring(0, expression_to_print.length() - 2) + ");\n");
+            node_expression.put(ctx, "Formatter.classCastHelper(" + expression_to_print + ");\n");
         }
     }
 

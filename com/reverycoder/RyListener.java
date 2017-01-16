@@ -248,6 +248,16 @@ public interface RyListener extends ParseTreeListener {
 	 */
 	void exitIf_statement(RyParser.If_statementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RyParser#unless_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnless_statement(RyParser.Unless_statementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#unless_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnless_statement(RyParser.Unless_statementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RyParser#all_assignment}.
 	 * @param ctx the parse tree
 	 */
