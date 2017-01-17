@@ -1,0 +1,4 @@
+a = 5
+b = 3
+puts "Unless modifier work!" unless a > b
+puts "If modifier work!" if b < a 

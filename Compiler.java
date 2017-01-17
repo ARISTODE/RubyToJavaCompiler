@@ -1,8 +1,10 @@
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.CharStream.*;
 import org.antlr.v4.runtime.tree.gui.SystemFontMetrics;
 
 import java.io.*;
@@ -536,23 +538,22 @@ public class Compiler {
         // ================================  If statement  =======================================
 
         public void exitIf_statement(RyParser.If_statementContext ctx) {
-            // either end or else if
-            String child_4 = ctx.getChild(4).getText();
             String comp_expression = node_expression.get(ctx.getChild(1));
             String statement_body_expression = node_expression.get(ctx.getChild(3));
-            String if_expression = "";
-
-            if_expression += "if (" + comp_expression + ") {";
-            if_expression += "\t\t" + statement_body_expression;
-            if_expression += "\n" + "}";
-
-            if (child_4.contains("else") || child_4.contains("elsif")) {
-                String else_token = node_expression.get(ctx.getChild(4));
+            String if_expression = String.format("if (%s) {\n \t%s \n}", comp_expression,statement_body_expression);
+            // either end or else if
+            if (ctx.getChild(4) instanceof RyParser.Else_tokenContext) {
                 String else_statement_body_expression =  node_expression.get(ctx.getChild(6));
-                if_expression += else_token + "{" + else_statement_body_expression + "\n}";
+                String if_else_expression = String.format("%s else {\n \t%s \n}",if_expression, else_statement_body_expression);
+                node_expression.put(ctx, if_else_expression);
+            } else if (ctx.getChild(4) instanceof RyParser.Elsif_statementContext) {
+                String else_if_expression = node_expression.get(ctx.getChild(4));
+                // handle the form of elseif in the exitIf_else func
+                String if_elsif_expression = String.format("%s%s",if_expression, else_if_expression);
+                node_expression.put(ctx, if_elsif_expression);
+            } else {
+                node_expression.put(ctx, if_expression);
             }
-
-            node_expression.put(ctx, if_expression);
         }
 
         public void exitCond_expression(RyParser.Cond_expressionContext ctx) {
@@ -613,26 +614,20 @@ public class Compiler {
             int child_num = ctx.getChildCount();
             String cond_expression = node_expression.get(ctx.getChild(1));
             String statement_body_expression = node_expression.get(ctx.getChild(3));
-            String if_elseif_expression = "else if" + " (" + cond_expression + ") {";
-            if_elseif_expression += "\t" + statement_body_expression + "\n} ";
+            String if_elseif_statement_body = String.format("else if(%s) {\n %s \n}", cond_expression, statement_body_expression);
 
-            // there are more else if or else
-
-            if (child_num > 4) {
-                if (ctx.getChild(4).getText().contains("else")) {
-                    String else_token  = node_expression.get(ctx.getChild(4));
-                    String else_statement_expression =  node_expression.get(ctx.getChild(6));
-                    String else_expression = if_elseif_expression + else_token + "{";
-                    else_expression += "\t" + else_statement_expression + "\n}";
-                    node_expression.put(ctx, else_expression);
-                    // TODO: fix null value bug
-                } else if (ctx.getChild(4).getText().contains("if_elsif")) {
-                    String nested_elseif_expression = node_expression.get(ctx.getChild(4));
-                    if_elseif_expression += nested_elseif_expression;
-                    node_expression.put(ctx, if_elseif_expression);
-                }
+            if (child_num == 4) {
+                node_expression.put(ctx, if_elseif_statement_body);
             } else {
-                node_expression.put(ctx, if_elseif_expression);
+                if (ctx.getChild(4) instanceof RyParser.Else_tokenContext) {
+                    String else_statement_expression =  node_expression.get(ctx.getChild(6));
+                    String if_elseif_else_expression = String.format("%s else {\n %s \n}", if_elseif_statement_body, else_statement_expression);
+                    node_expression.put(ctx, if_elseif_else_expression);
+                } else if (ctx.getChild(4) instanceof RyParser.If_elsif_statementContext) {
+                    String nested_elseif_expression = node_expression.get(ctx.getChild(4));
+                    String if_elseif_nested_expression = String.format("%s%s", if_elseif_statement_body, nested_elseif_expression);
+                    node_expression.put(ctx, if_elseif_nested_expression);
+                }
             }
         }
 
@@ -680,7 +675,7 @@ public class Compiler {
             int child_list_len = ctx.getChildCount() - 1;  // -- eliminate terminator
                 String statement_expression_list_expression = "";
                 for (int i = 0; i < child_list_len ; i++ ) {
-                    statement_expression_list_expression += ( "\n\t" + node_expression.get(ctx.getChild(i)) );
+                    statement_expression_list_expression += ( "\t" + node_expression.get(ctx.getChild(i)) + "\n" );
                 }
 
             node_expression.put(ctx, statement_expression_list_expression);
