@@ -7,7 +7,8 @@ expression_list : expression terminator
                 | terminator
                 ;
 
-expression : function_definition
+expression : class_definition
+           | function_definition
            | function_call
            | for_statement
            | while_statement
@@ -24,8 +25,13 @@ expression : function_definition
 puts_call: puts function_call
          | puts rvalue
          ;
+
+class_definition : CLASS class_name ('<' class_name)? CRLF class_body CRLF? END;
+class_name: constant;
+class_body: expression_list;
+
 //  function definitions
-function_definition: function_header function_body END;
+function_definition : function_header function_body END;
 
 function_header: DEF function_name crlf
                | DEF function_name function_params crlf
@@ -173,7 +179,11 @@ comp_var : all_result
          | id
          ;
 
-lvalue : id
+lvalue : var
+       | var_class
+       | var_instance
+       | var_global
+       | constant
        ;
 
 rvalue : lvalue
@@ -207,6 +217,7 @@ rvalue : lvalue
        | LEFT_RBRACKET rvalue RIGHT_RBRACKET
        ;
 
+
 literal_t : LITERAL;
 
 float_t : FLOAT;
@@ -218,6 +229,7 @@ bool_t : TRUE
        ;
 
 nil_t : NIL;
+
 
 id : ID;
 
@@ -239,6 +251,13 @@ COMMA : ',';
 SEMICOLON : ';';
 CRLF : '\n';
 
+var_class : '@@'ID;
+var_instance : '@'ID;
+var_global : '$'ID;
+var: ID;
+constant: CONSTANT;
+
+CLASS: 'class';
 END: 'end';
 DEF: 'def';
 
@@ -299,6 +318,8 @@ WS : (' '|'\t')+ -> skip;
 
 INT : [0-9]+;
 FLOAT : [0-9]*'.'[0-9]+;
+CONSTANT: [A-Z_]+[a-zA-Z]*;
 ID : [a-zA-Z_][a-zA-Z0-9_]*;
+
 
 puts: 'puts';

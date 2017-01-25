@@ -48,6 +48,36 @@ public interface RyListener extends ParseTreeListener {
 	 */
 	void exitPuts_call(RyParser.Puts_callContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RyParser#class_definition}.
+	 * @param ctx the parse tree
+	 */
+	void enterClass_definition(RyParser.Class_definitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#class_definition}.
+	 * @param ctx the parse tree
+	 */
+	void exitClass_definition(RyParser.Class_definitionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#class_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterClass_name(RyParser.Class_nameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#class_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitClass_name(RyParser.Class_nameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#class_body}.
+	 * @param ctx the parse tree
+	 */
+	void enterClass_body(RyParser.Class_bodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#class_body}.
+	 * @param ctx the parse tree
+	 */
+	void exitClass_body(RyParser.Class_bodyContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RyParser#function_definition}.
 	 * @param ctx the parse tree
 	 */
@@ -547,6 +577,56 @@ public interface RyListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCrlf(RyParser.CrlfContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#var_class}.
+	 * @param ctx the parse tree
+	 */
+	void enterVar_class(RyParser.Var_classContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#var_class}.
+	 * @param ctx the parse tree
+	 */
+	void exitVar_class(RyParser.Var_classContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#var_instance}.
+	 * @param ctx the parse tree
+	 */
+	void enterVar_instance(RyParser.Var_instanceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#var_instance}.
+	 * @param ctx the parse tree
+	 */
+	void exitVar_instance(RyParser.Var_instanceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#var_global}.
+	 * @param ctx the parse tree
+	 */
+	void enterVar_global(RyParser.Var_globalContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#var_global}.
+	 * @param ctx the parse tree
+	 */
+	void exitVar_global(RyParser.Var_globalContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#var}.
+	 * @param ctx the parse tree
+	 */
+	void enterVar(RyParser.VarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#var}.
+	 * @param ctx the parse tree
+	 */
+	void exitVar(RyParser.VarContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RyParser#constant}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstant(RyParser.ConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RyParser#constant}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstant(RyParser.ConstantContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RyParser#puts}.
 	 * @param ctx the parse tree

@@ -207,7 +207,26 @@ public class Compiler {
             node_expression.put(ctx, int_val_text);
         }
 
-    // ================================  Function =====================================
+
+    // =================================  Class  ======================================
+        public void exitClass_definition(RyParser.Class_definitionContext ctx) {
+            String class_name = node_expression.get(ctx.getChild(1));
+            String class_body_expressions = node_expression.get(ctx.getChild(3));
+            String class_definition_expression = String.format("class %s {\n %s \n}", class_name, class_body_expressions);
+            node_expression.put(ctx, class_definition_expression);
+        }
+
+        public void exitClass_name(RyParser.Class_nameContext ctx) {
+            String constant_expression = node_expression.get(ctx.getChild(0));
+            node_expression.put(ctx, constant_expression);
+        }
+
+        public void exitClass_body(RyParser.Class_bodyContext ctx) {
+            String class_body_expression_list = node_expression.get(ctx.getChild(0));
+            node_expression.put(ctx, class_body_expression_list);
+        }
+
+        // ================================  Function =====================================
         public void exitFunction_definition(RyParser.Function_definitionContext ctx) {
             String function_header_expression = node_expression.get(ctx.getChild(0));
             String function_body_expression = node_expression.get(ctx.getChild(1));
@@ -387,7 +406,6 @@ public class Compiler {
 
         public void exitFloat_result(RyParser.Float_resultContext ctx) {
             if (ctx.getChildCount() == 3 && ctx.op != null) {
-
                 String left_expression = node_expression.get(ctx.getChild(0));
                 String right_expression = node_expression.get(ctx.getChild(2));
                 String float_expression = generateResultExpression(left_expression, ctx.op.getText(), right_expression);
